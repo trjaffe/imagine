@@ -45,9 +45,9 @@
     <!-- random magnetic field grid -->
     <box_brnd> <!-- optional if no brnd I/O AND no internal brnd model -->
       <!-- grid vertex size -->
-      <nx value="800"/> <!-- -->
-      <ny value="800"/> <!-- -->
-      <nz value="160"/> <!-- -->
+      <nx value="400"/> <!-- -->
+      <ny value="400"/> <!-- -->
+      <nz value="80"/> <!-- -->
       <!-- box limit, in galactic-centric frame -->
       <x_min value="-20.0"/> <!-- kpc -->
       <x_max value="20.0"/> <!-- kpc -->

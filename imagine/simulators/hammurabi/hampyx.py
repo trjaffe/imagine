@@ -80,7 +80,7 @@ class Hampyx(object):
                  exe_path=None):
         log.debug('initialize Hampyx')
         # current working directory
-        self.wk_dir = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+        self.wk_dir = os.getcwd() # os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
         log.debug('set working directory at %s' % self.wk_dir)
         # encapsulated below
         self.exe_path = exe_path
