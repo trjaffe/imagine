@@ -179,7 +179,8 @@ class Hampyx(object):
             self._sim_map = sim_map
             log.debug('set simulation map dict %s' % str(sim_map.keys()))
 
-    def __call__(self, verbose=False):
+
+    def __call__(self, writelog=False, raiseonerr=True):
         """
         the main routine for running hammurabiX executable
         """
@@ -187,25 +188,36 @@ class Hampyx(object):
         if self.temp_file is self._base_file:
             self._new_xml_copy()
         # if need verbose output
-        if verbose is True:
+        if writelog is True:
             logfile = open('hammurabiX_run.log', 'w')
             errfile = open('hammurabiX_err.log', 'w')
+        else:
+            logfile=subprocess.PIPE
+            errfile=subprocess.PIPE
+
+        try:
             temp_process = subprocess.Popen([self._executable, self._temp_file],
                                             stdout=logfile,
                                             stderr=errfile)
-            temp_process.wait()
+            returncode = temp_process.wait()
+        except Exception as e:
+            if raiseonerr:
+                raise OSError("ERROR subprocess.Popen raised {}".format(e))
+            else:
+                print("WARNING subprocess.Popen raised {}".format(e))
+ 
+        if returncode != 0:
+            #  This only returns the output if you used subprocess.PIPE, i.e. writelog=False 
+            last_call_log, last_call_err = temp_process.communicate()
+            print(last_call_log)
+            print(last_call_err)
+            if raiseonerr:
+                raise ValueError("HamX returned status {}".format(returncode))
+
+        if writelog is True:
             logfile.close()
             errfile.close()
-        # if quiet, only print upon error
-        else:
-            temp_process = subprocess.Popen([self._executable, self._temp_file],
-                                            stdout=subprocess.PIPE,
-                                            stderr=subprocess.STDOUT)
-            temp_process.wait()
-            if temp_process.returncode != 0:
-                last_call_log, last_call_err = temp_process.communicate()
-                print(last_call_log)
-                print(last_call_err)
+
         # grab output maps and delete temp files
         self._get_sims()
         self._del_xml_copy()
